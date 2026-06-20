@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option java_package = "com.ash.flowr.data.datastore";
+option java_multiple_files = true;
+
+enum ThemeMode {
+  SYSTEM = 0;
+  LIGHT = 1;
+  DARK = 2;
+}
+
+message UserPreferences {
+  int64 last_successful_sweep = 1;
+  bool portfolio_enabled = 2;
+  ThemeMode theme_mode = 3;
+  bool material_you_enabled = 4;
+  bool onboarding_complete = 5;
+  int64 last_used_account_id = 6;
+}
