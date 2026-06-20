@@ -31,6 +31,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ash.flowr.data.local.entity.TransactionEntity
 import com.ash.flowr.ui.screen.dashboard.DashboardScreen
+import com.ash.flowr.ui.screen.review.ReviewScreen
 import com.ash.flowr.ui.screen.settings.SettingsScreen
 import com.ash.flowr.ui.screen.stats.StatsScreen
 import com.ash.flowr.ui.sheet.MenuSheet
@@ -114,11 +115,17 @@ private fun MainScaffold() {
                     },
                     onTransactionLongClick = { txn ->
                         deletingTransaction = txn
+                    },
+                    onReviewClick = {
+                        navController.navigate(FlowrDestination.Review.route)
                     }
                 )
             }
             composable(FlowrDestination.Stats.route) {
                 StatsScreen()
+            }
+            composable(FlowrDestination.Review.route) {
+                ReviewScreen()
             }
             composable(FlowrDestination.Settings.route) {
                 SettingsScreen()
@@ -126,7 +133,6 @@ private fun MainScaffold() {
         }
     }
 
-    // Menu sheet
     if (showMenu) {
         ModalBottomSheet(
             onDismissRequest = { showMenu = false },
@@ -134,12 +140,12 @@ private fun MainScaffold() {
         ) {
             MenuSheet(
                 onStatsClick = { navController.navigate(FlowrDestination.Stats.route) },
+                onReviewClick = { navController.navigate(FlowrDestination.Review.route) },
                 onDismiss = { showMenu = false }
             )
         }
     }
 
-    // Quick-add / edit sheet
     if (showQuickAdd) {
         QuickAddSheet(
             editingTransaction = editingTransaction,
@@ -151,7 +157,6 @@ private fun MainScaffold() {
         )
     }
 
-    // Delete confirmation dialog
     deletingTransaction?.let { txn ->
         AlertDialog(
             onDismissRequest = { deletingTransaction = null },

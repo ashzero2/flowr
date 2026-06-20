@@ -8,5 +8,7 @@ data class ParsedTransaction(
     val bankAccountId: Long,
     val smsId: Long,
     val date: Long,
-    val refNo: String?
+    val refNo: String?,
+    val rawBody: String,
+    val senderAddress: String
 )

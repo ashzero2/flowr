@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.ash.flowr.data.local.entity.BankAccountEntity
 import com.ash.flowr.data.local.entity.TransactionEntity
 import com.ash.flowr.data.repository.BankAccountRepository
+import com.ash.flowr.data.repository.SmsInboxRepository
 import com.ash.flowr.data.repository.TransactionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -21,7 +22,8 @@ data class MonthSummary(val totalExpense: Double, val totalIncome: Double, val t
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     transactionRepo: TransactionRepository,
-    bankAccountRepo: BankAccountRepository
+    bankAccountRepo: BankAccountRepository,
+    smsInboxRepository: SmsInboxRepository
 ) : ViewModel() {
 
     private val currentMonth = YearMonth.now()
@@ -57,4 +59,7 @@ class DashboardViewModel @Inject constructor(
                 totalTransfer = txns.filter { it.type == "TRANSFER" }.sumOf { it.amount }
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), MonthSummary(0.0, 0.0, 0.0))
+
+    val pendingReviewCount: StateFlow<Int> = smsInboxRepository.observePendingCount()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
 }

@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.ash.flowr.data.datastore.UserPreferencesRepository
 import com.ash.flowr.data.local.entity.BankAccountEntity
 import com.ash.flowr.data.repository.BankAccountRepository
+import com.ash.flowr.worker.SweepScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -22,7 +23,8 @@ private val colorPresets = listOf(
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
     private val bankAccountRepository: BankAccountRepository,
-    private val prefs: UserPreferencesRepository
+    private val prefs: UserPreferencesRepository,
+    private val sweepScheduler: SweepScheduler
 ) : ViewModel() {
 
     var step by mutableStateOf(0)
@@ -74,6 +76,7 @@ class OnboardingViewModel @Inject constructor(
             .toInstant()
             .toEpochMilli()
         prefs.completeOnboarding(todayMidnight)
+        sweepScheduler.scheduleImmediateSweep()
         onDone()
     }
 }

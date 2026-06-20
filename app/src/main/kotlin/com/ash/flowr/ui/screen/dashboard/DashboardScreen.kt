@@ -2,6 +2,7 @@ package com.ash.flowr.ui.screen.dashboard
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,7 +24,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.Inbox
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -60,11 +63,13 @@ fun DashboardScreen(
     onAddClick: () -> Unit = {},
     onTransactionClick: (TransactionEntity) -> Unit = {},
     onTransactionLongClick: (TransactionEntity) -> Unit = {},
+    onReviewClick: () -> Unit = {},
     viewModel: DashboardViewModel = hiltViewModel()
 ) {
     val accounts by viewModel.accounts.collectAsState()
     val recentTransactions by viewModel.recentTransactions.collectAsState()
     val summary by viewModel.monthSummary.collectAsState()
+    val pendingCount by viewModel.pendingReviewCount.collectAsState()
 
     Scaffold(
         floatingActionButton = {
@@ -81,6 +86,17 @@ fun DashboardScreen(
                 .padding(innerPadding),
             contentPadding = PaddingValues(bottom = 16.dp)
         ) {
+            // SMS inbox banner — only visible when there are pending items
+            if (pendingCount > 0) {
+                item {
+                    InboxBanner(
+                        count = pendingCount,
+                        onClick = onReviewClick,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
+                }
+            }
+
             item {
                 LazyRow(
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
@@ -131,6 +147,40 @@ fun DashboardScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun InboxBanner(count: Int, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    val label = if (count == 1) "1 transaction from SMS" else "$count transactions from SMS"
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .background(MaterialTheme.colorScheme.primaryContainer)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 14.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            Icons.Default.Inbox,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+            modifier = Modifier.size(18.dp)
+        )
+        Spacer(Modifier.width(10.dp))
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            modifier = Modifier.weight(1f)
+        )
+        Icon(
+            Icons.Default.ArrowForward,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+            modifier = Modifier.size(16.dp)
+        )
     }
 }
 

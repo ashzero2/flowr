@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.Inbox
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
@@ -28,6 +29,7 @@ import com.ash.flowr.ui.theme.MutedText
 fun MenuSheet(
     portfolioEnabled: Boolean = false,
     onStatsClick: () -> Unit = {},
+    onReviewClick: () -> Unit = {},
     onPortfolioClick: () -> Unit = {},
     onRecurringClick: () -> Unit = {},
     onExportClick: () -> Unit = {},
@@ -42,6 +44,13 @@ fun MenuSheet(
             "Menu",
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(horizontal = 4.dp, vertical = 12.dp)
+        )
+
+        MenuTile(
+            icon = Icons.Default.Inbox,
+            label = "Inbox",
+            description = "Review SMS-parsed transactions",
+            onClick = { onReviewClick(); onDismiss() }
         )
 
         MenuTile(
