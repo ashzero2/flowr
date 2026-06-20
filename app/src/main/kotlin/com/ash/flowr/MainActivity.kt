@@ -4,6 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
 import com.ash.flowr.ui.navigation.FlowrNavGraph
 import com.ash.flowr.ui.theme.FlowrTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -15,7 +18,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             FlowrTheme {
-                FlowrNavGraph()
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.background
+                ) {
+                    FlowrNavGraph()
+                }
             }
         }
     }

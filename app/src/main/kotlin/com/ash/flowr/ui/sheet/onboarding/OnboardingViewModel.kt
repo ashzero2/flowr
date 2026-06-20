@@ -15,6 +15,10 @@ import java.time.LocalDate
 import java.time.ZoneId
 import javax.inject.Inject
 
+private val colorPresets = listOf(
+    "#1C3D2F", "#2E5F8A", "#6B4A9E", "#B85C2A", "#A8395A", "#2A6B62"
+)
+
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
     private val bankAccountRepository: BankAccountRepository,
@@ -27,21 +31,25 @@ class OnboardingViewModel @Inject constructor(
     var smsDeclined by mutableStateOf(false)
         private set
 
-    val bankForms = mutableStateListOf(
-        BankFormState(colorHex = "#1A56DB"),
-        BankFormState(colorHex = "#10B981"),
-        BankFormState(colorHex = "#F59E0B")
-    )
+    val bankForms = mutableStateListOf(BankFormState(colorHex = colorPresets[0]))
 
     val recurringForms = mutableStateListOf(
-        RecurringFormState(name = "Rent", isChecked = false),
-        RecurringFormState(name = "Netflix", isChecked = false),
-        RecurringFormState(name = "Claude", isChecked = false)
+        RecurringFormState(name = "Rent"),
+        RecurringFormState(name = "Netflix"),
+        RecurringFormState(name = "Claude")
     )
 
     fun onSmsDeclined() { smsDeclined = true }
     fun nextStep() { if (step < 2) step++ }
     fun prevStep() { if (step > 0) step-- }
+
+    fun addBankForm() {
+        bankForms.add(BankFormState(colorHex = colorPresets[bankForms.size % colorPresets.size]))
+    }
+
+    fun removeBankForm(index: Int) {
+        if (bankForms.size > 1) bankForms.removeAt(index)
+    }
 
     fun completeOnboarding(onDone: () -> Unit) = viewModelScope.launch {
         val accounts = bankForms
@@ -76,7 +84,7 @@ data class BankFormState(
     var smsIdentifier: String = "",
     var accountLast4: String = "",
     var startingBalance: String = "0",
-    var colorHex: String = "#1A56DB"
+    var colorHex: String = "#1C3D2F"
 )
 
 data class RecurringFormState(
